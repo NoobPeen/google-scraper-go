@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -219,20 +218,20 @@ type SearchResult struct {
 	ResultDesc  string
 }
 
-var userAgents = []string{
-	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
-	"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
-	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
-	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38",
-	"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0",
-	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38",
-}
+// var userAgents = []string{
+// 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+// 	"Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+// 	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
+// 	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38",
+// 	"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:56.0) Gecko/20100101 Firefox/56.0",
+// 	"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Safari/604.1.38",
+// }
 
-func randomUserAgent() string {
-	// rand.Seed((time.Now().Unix()))
-	randNum := rand.Int() % len(userAgents)
-	return userAgents[randNum]
-}
+// func randomUserAgent() string {
+// 	// rand.Seed((time.Now().Unix()))
+// 	randNum := rand.Int() % len(userAgents)
+// 	return userAgents[randNum]
+// }
 
 func buildGoogleUrls(searchTerm string, languageCode string, countryCode string, pages int, count int) ([]string, error) {
 	toScrape := []string{}
@@ -252,7 +251,6 @@ func buildGoogleUrls(searchTerm string, languageCode string, countryCode string,
 }
 
 func googleResultParsing(response *http.Response, rank int) ([]SearchResult, error) {
-	// Parse the document
 	doc, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
 		return nil, err
@@ -260,8 +258,7 @@ func googleResultParsing(response *http.Response, rank int) ([]SearchResult, err
 	// htmlContent, _ := doc.Html()
 	// fmt.Println(htmlContent[:500])
 	results := []SearchResult{}
-	// Find the result items; Google often changes its class names, so 'div.g' might need updating
-	sel := doc.Find(".g") // Updated from 'div.g' to '.g' assuming 'g' is a class used for result items
+	sel := doc.Find(".g")
 
 	for i := range sel.Nodes {
 		item := sel.Eq(i)
@@ -281,7 +278,7 @@ func googleResultParsing(response *http.Response, rank int) ([]SearchResult, err
 		fmt.Println("Title and Desc:", title, desc)
 		link = strings.Trim(link, " ")
 
-		// Validate link to ensure it is a valid URL and not a Google ad or other unwanted URL
+		// Validate
 		if link != "" && link != "#" && !strings.HasPrefix(link, "/") {
 			result := SearchResult{
 				ResultRank:  rank,
@@ -290,7 +287,7 @@ func googleResultParsing(response *http.Response, rank int) ([]SearchResult, err
 				ResultDesc:  desc,
 			}
 			results = append(results, result)
-			rank++ // Increment rank for each valid result
+			rank++ // Increment
 		}
 	}
 	return results, nil
@@ -360,7 +357,11 @@ func scrapeClientRequest(searchURL string, proxyString interface{}) (*http.Respo
 
 func main() {
 	fmt.Println("Starting scrape...")
-	res, err := GoogleScrape("Jennifer Connelly", "en", "com", nil, 1, 30, 10)
+	var keySearch string
+	fmt.Println("Enter the key Search Word")
+	fmt.Scan(&keySearch)
+
+	res, err := GoogleScrape(keySearch, "en", "com", nil, 1, 30, 10)
 	if err != nil {
 		fmt.Println("Error during scrape:", err)
 	} else {
