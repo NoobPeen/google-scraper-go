@@ -7,3 +7,28 @@ This project is a simple, yet effective tool built in Go for scraping Google sea
 - Implements proper error handling.
 - Configurable proxy support for making requests.
 
+#### How to Use
+
+1.Clone the repository:
+
+```
+git clone https://github.com/yourusername/google-scraper-go.git
+```
+
+2.Navigate to the project directory:
+
+```
+cd google-scraper-go
+```
+
+3.Install dependencies:
+
+```
+go mod tidy
+```
+
+4.Run the scraper using:
+
+```
+go run main.go
+```
