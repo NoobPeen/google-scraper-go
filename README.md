@@ -32,3 +32,4 @@ go mod tidy
 ```
 go run main.go
 ```
+### This tool is intended for educational purposes only. 
